@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbershop Boxes — 2026-27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --barber-red:#A6192E;
+    --barber-navy:#1C2541;
+    --barber-cream:#F4EEE1;
+    --barber-brass:#B08D57;
+    --ink:#241C15;
+    --line:#D8CDB6;
+    --awful:#980000;
+    --bad:#F4C7C3;
+    --good:#B7E1CD;
+    --great:#38761D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--barber-cream);
+    color:var(--ink);
+    font-family:'Roboto Condensed',sans-serif;
+    font-size:16px;
+    line-height:1.45;
+  }
+  h1,h2,h3,.display{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.5px;
+    font-weight:400;
+  }
+  .stripe-bar{
+    height:8px;
+    background:repeating-linear-gradient(135deg,
+      var(--barber-red) 0 18px,
+      #fff 18px 26px,
+      var(--barber-navy) 26px 44px,
+      #fff 44px 52px);
+  }
+  header{
+    background:var(--barber-navy);
+    color:var(--barber-cream);
+    padding:22px 28px 16px;
+  }
+  header .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  header .brand h1{font-size:2.6rem;margin:0;color:#fff;}
+  header .brand .sub{font-size:0.95rem;color:var(--barber-brass);text-transform:uppercase;letter-spacing:2px;}
+  nav{display:flex;gap:4px;margin-top:16px;flex-wrap:wrap;}
+  nav button{
+    background:transparent;border:1px solid rgba(244,238,225,0.35);color:var(--barber-cream);
+    padding:9px 18px;font-family:'Roboto Condensed',sans-serif;font-size:0.95rem;font-weight:700;
+    text-transform:uppercase;letter-spacing:1px;cursor:pointer;border-radius:2px;
+  }
+  nav button.active{background:var(--barber-red);border-color:var(--barber-red);}
+
+  main{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:3px;padding:20px 22px;margin-bottom:22px;}
+  .card h2{font-size:1.6rem;margin:0 0 4px;color:var(--barber-navy);}
+  .card .hint{color:var(--barber-brass);font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+
+  table{width:100%;border-collapse:collapse;font-size:0.95rem;}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);}
+  th{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.5px;color:var(--barber-navy);text-align:left;cursor:pointer;user-select:none;}
+  th.sortable:hover{color:var(--barber-red);}
+  tr:last-child td{border-bottom:none;}
+  .pay-win{color:var(--great);font-weight:700;}
+  .pay-none{color:#8C8478;}
+
+  .day-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media(max-width:820px){.day-grid{grid-template-columns:1fr;}}
+
+  .stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+  .stat{background:var(--barber-navy);color:#fff;padding:12px 18px;border-radius:3px;min-width:150px;}
+  .stat .num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--barber-brass);}
+  .stat .lbl{font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;}
+  .stat.rollover .num{color:#fff;}
+  .stat.rollover{background:var(--barber-red);}
+
+  /* Season at a Glance: 4 columns x 2 rows */
+  .glance-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+  }
+  @media(max-width:900px){.glance-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.glance-grid{grid-template-columns:1fr;}}
+  .glance-col{display:flex;flex-direction:column;gap:10px;}
+  .glance-col .col-head{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.15rem;
+    letter-spacing:1px;
+    color:var(--barber-navy);
+    border-bottom:2px solid var(--barber-brass);
+    padding-bottom:4px;
+  }
+  .glance-col .stat{width:100%;}
+
+  .lb-cell{padding:6px 10px;font-weight:700;border-radius:2px;}
+
+  /* Squares + detail side-by-side */
+  .squares-layout{
+    display:grid;
+    grid-template-columns:minmax(260px,440px) 1fr;
+    gap:24px;
+    align-items:start;
+  }
+  @media(max-width:860px){
+    .squares-layout{grid-template-columns:1fr;}
+  }
+  .detail-col{
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:16px 18px;
+    min-height:120px;
+  }
+  .detail-placeholder{color:#8C8478;font-style:italic;}
+
+  .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+
+  @media(max-width:480px){
+    header{padding:16px 16px 12px;}
+    header .brand h1{font-size:2rem;}
+    nav button{padding:8px 12px;font-size:0.85rem;}
+    main{padding:18px 12px 40px;}
+    .card{padding:16px 14px;}
+    .sq{font-size:0.65rem;}
+    .stat{min-width:120px;padding:10px 14px;}
+    .stat .num{font-size:1.5rem;}
+    .glance-grid{gap:10px;}
+  }
+
+  /* Squares grid */
+  .squares{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:640px;}
+  .sq{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+    font-size:0.8rem;font-weight:700;border-radius:2px;cursor:pointer;color:#fff;
+    border:2px solid transparent;
+  }
+  .sq.taken{background:var(--barber-red);}
+  .sq.open{background:var(--barber-brass);opacity:0.55;}
+  .sq.selected{border-color:var(--barber-navy);}
+  .sq:hover{outline:2px solid var(--barber-navy);}
+  .legend{display:flex;gap:18px;margin-top:12px;font-size:0.85rem;align-items:center;}
+  .legend .dot{width:12px;height:12px;display:inline-block;border-radius:2px;margin-right:6px;vertical-align:-1px;}
+
+  .lookup{display:flex;gap:10px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
+  .lookup input{
+    font-family:'Bebas Neue',sans-serif;font-size:1.4rem;width:100px;padding:6px 10px;
+    border:2px solid var(--barber-navy);border-radius:2px;
+  }
+  .lookup button{
+    background:var(--barber-red);color:#fff;border:none;padding:10px 20px;
+    font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;cursor:pointer;border-radius:2px;
+  }
+
+  .odds-chip{
+    display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:3px;
+    font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.5px;color:var(--ink);
+    background:#fff;border:1px solid var(--line);
+  }
+  .odds-chip .swatch{
+    width:12px;height:12px;flex:0 0 auto;border-radius:2px;border:1px solid rgba(0,0,0,0.15);
+  }
+  .odds-cell{text-align:center;font-weight:700;color:#241C15;}
+
+  .this-week-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 18px;}
+  @media(max-width:700px){.this-week-grid{grid-template-columns:1fr;}}
+  .tw-card{border:1px solid var(--line);border-radius:3px;padding:12px 14px;text-align:center;}
+  .tw-card .day-lbl{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--barber-navy);letter-spacing:1px;}
+  .tw-card .combo{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;margin:4px 0;}
+
+  footer{text-align:center;padding:22px;color:var(--barber-brass);font-size:0.8rem;}
+</style>
+</head>
+<body>
+
+<div class="stripe-bar"></div>
+<header>
+  <div class="brand">
+    <h1>Barbershop Boxes</h1>
+    <span class="sub">2026&ndash;27 NFL Squares Pool</span>
+  </div>
+  <nav>
+    <button class="tab-btn active" data-view="overview">Pool Overview</button>
+    <button class="tab-btn" data-view="leaderboard">Leaderboard</button>
+    <button class="tab-btn" data-view="squares">Squares</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===== POOL OVERVIEW ===== -->
+  <section class="view active" id="view-overview">
+    <div class="card">
+      <h2>Season at a Glance</h2>
+      <div class="glance-grid" id="glance-grid"></div>
+    </div>
+
+    <div class="day-grid" id="overview-days"></div>
+  </section>
+
+  <!-- ===== LEADERBOARD ===== -->
+  <section class="view" id="view-leaderboard">
+    <div class="card">
+      <h2>Leaderboard</h2>
+      <div class="hint">Click a column header to sort</div>
+      <div class="table-scroll">
+      <table id="lb-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-key="box">Box #</th>
+            <th class="sortable" data-key="status">Status</th>
+            <th class="sortable" data-key="times_hit">Times Hit</th>
+            <th class="sortable" data-key="winnings">Total Winnings</th>
+          </tr>
+        </thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SQUARES ===== -->
+  <section class="view" id="view-squares">
+    <div class="card">
+      <h2>The Board</h2>
+      <div class="hint">Tap any box to see how it's doing this season</div>
+      <div class="squares-layout">
+        <div class="squares-col">
+          <div class="squares" id="squares-grid"></div>
+          <div class="legend">
+            <span><span class="dot" style="background:var(--barber-red)"></span>Taken</span>
+            <span><span class="dot" style="background:var(--barber-brass);opacity:.55"></span>Not Taken (rollover risk)</span>
+          </div>
+        </div>
+        <div class="detail-col" id="box-detail-side">
+          <div class="detail-placeholder" id="box-detail-placeholder">Select a box to see its status.</div>
+          <div id="box-detail-content" style="display:none;">
+            <h2 id="box-detail-title">Box —</h2>
+            <div class="stat-row" id="box-stats"></div>
+            <h4 style="margin:18px 0 4px;">What Are My Numbers This Week? (Week <span id="cw-num"></span>)</h4>
+            <div class="this-week-grid" id="this-week"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="box-weekly-card" style="display:none;">
+      <h2>How Good Are My Numbers This Season?</h2>
+      <div class="hint">Straight odds by night, one row per week</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Week</th><th>Thursday</th><th>Sunday</th><th>Monday</th></tr></thead>
+          <tbody id="box-weekly-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>Barbershop Boxes &middot; boxes.redplanetanalytics.com</footer>
+
+<script id="site-data" type="application/json">__DATA__</script>
+<script>
+const DATA = JSON.parse(document.getElementById('site-data').textContent);
+
+// ---- tab nav ----
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+  });
+});
+
+function fmtMoney(n){ return '$'+Number(n||0).toLocaleString(); }
+
+// ---- odds bucket (Great/Good/Bad/Awful, matches source workbook thresholds) ----
+function oddsBucket(pctFraction){
+  // pctFraction expressed as a fraction (0.04 = 4%), matching workbook thresholds
+  if(pctFraction < 0.01) return {label:'Awful', bg:'var(--awful)', fg:'#fff'};
+  if(pctFraction < 0.02) return {label:'Bad', bg:'var(--bad)', fg:'#241C15'};
+  if(pctFraction < 0.04) return {label:'Good', bg:'var(--good)', fg:'#241C15'};
+  return {label:'Great', bg:'var(--great)', fg:'#fff'};
+}
+
+// ---- Pool Overview ----
+function buildOverview(){
+  const r = DATA.rollover;
+  const td = DATA.top_dollar_box, th = DATA.top_hit_box;
+
+  const cols = [
+    { head:'Top Boxes', stats:[
+      {num:'#'+td.box, lbl:fmtMoney(td.winnings)+' Won'},
+      {num:'#'+th.box, lbl:'Hit '+th.times_hit+'x'}
+    ], rollover:false},
+    { head:'Thursday', stats:[
+      {num:fmtMoney(r.THU.straight), lbl:'Straight Rollover'},
+      {num:fmtMoney(r.THU.reverse), lbl:'Reverse Rollover'}
+    ], rollover:true},
+    { head:'Sunday', stats:[
+      {num:fmtMoney(r.SUN.straight), lbl:'Straight Rollover'},
+      {num:fmtMoney(r.SUN.reverse), lbl:'Reverse Rollover'}
+    ], rollover:true},
+    { head:'Monday', stats:[
+      {num:fmtMoney(r.MON.straight), lbl:'Straight Rollover'},
+      {num:fmtMoney(r.MON.reverse), lbl:'Reverse Rollover'}
+    ], rollover:true},
+  ];
+
+  document.getElementById('glance-grid').innerHTML = cols.map(c=>`
+    <div class="glance-col">
+      <div class="col-head">${c.head}</div>
+      ${c.stats.map(s=>`
+        <div class="stat${c.rollover?' rollover':''}">
+          <div class="num">${s.num}</div>
+          <div class="lbl">${s.lbl}</div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  const dayNames = {THU:'Thursday', SUN:'Sunday', MON:'Monday'};
+  const container = document.getElementById('overview-days');
+  container.innerHTML = '';
+  Object.keys(dayNames).forEach(d=>{
+    const rows = DATA.weekly[d].filter(w=>w.score && w.score!=='-');
+    let rowsHtml = rows.map(w=>`
+      <tr>
+        <td>Wk ${w.week}</td>
+        <td>${w.score}</td>
+        <td class="${w.straight_pay?'pay-win':'pay-none'}">${w.straight_pay?('Box '+w.straight_box+' — '+fmtMoney(w.straight_pay)):'No hit'}</td>
+        <td class="${w.reverse_pay?'pay-win':'pay-none'}">${w.reverse_pay?('Box '+w.reverse_box+' — '+fmtMoney(w.reverse_pay)):'No hit'}</td>
+      </tr>`).join('');
+    if(!rowsHtml) rowsHtml = `<tr><td colspan="4" style="color:#8C8478">No games played yet</td></tr>`;
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `
+      <h2>${dayNames[d]}</h2>
+      <div class="hint">Straight $700 &middot; Reverse $200</div>
+      <div class="table-scroll">
+      <table>
+        <thead><tr><th>Week</th><th>Score</th><th>Straight</th><th>Reverse</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+// ---- Leaderboard ----
+let lbSort = {key:'winnings', dir:-1};
+function buildLeaderboard(){
+  renderLeaderboard();
+  document.querySelectorAll('#lb-table th.sortable').forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const key = th.dataset.key;
+      if(lbSort.key === key){ lbSort.dir *= -1; } else { lbSort = {key, dir:1}; }
+      renderLeaderboard();
+    });
+  });
+}
+function greenScale(value, max){
+  // white (255,255,255) -> workbook green (#57BB8A / 87,187,138)
+  const t = max>0 ? Math.min(value/max, 1) : 0;
+  const r = Math.round(255 + t*(87-255));
+  const g = Math.round(255 + t*(187-255));
+  const b = Math.round(255 + t*(138-255));
+  return `rgb(${r},${g},${b})`;
+}
+function renderLeaderboard(){
+  const rows = [...DATA.leaderboard].sort((a,b)=>{
+    const av=a[lbSort.key], bv=b[lbSort.key];
+    if(typeof av === 'string') return av.localeCompare(bv)*lbSort.dir;
+    return (av-bv)*lbSort.dir;
+  });
+  const maxHit = Math.max(...DATA.leaderboard.map(r=>r.times_hit), 0);
+  const maxWin = Math.max(...DATA.leaderboard.map(r=>r.winnings), 0);
+  document.getElementById('lb-body').innerHTML = rows.map(r=>`
+    <tr>
+      <td>${r.box}</td>
+      <td>${r.status}</td>
+      <td><span class="lb-cell" style="background:${greenScale(r.times_hit,maxHit)}">${r.times_hit}</span></td>
+      <td><span class="lb-cell" style="background:${greenScale(r.winnings,maxWin)}">${fmtMoney(r.winnings)}</span></td>
+    </tr>`).join('');
+}
+
+// ---- Squares + box detail ----
+let selectedSq = null;
+function buildSquares(){
+  const grid = document.getElementById('squares-grid');
+  grid.innerHTML='';
+  for(let i=1;i<=100;i++){
+    const t = DATA.taken[i] || {};
+    const div = document.createElement('div');
+    div.className = 'sq ' + (t.status==='TAKEN' ? 'taken':'open');
+    div.textContent = i;
+    div.addEventListener('click', ()=>{
+      if(selectedSq) selectedSq.classList.remove('selected');
+      div.classList.add('selected');
+      selectedSq = div;
+      showBoxDetail(i,t);
+    });
+    grid.appendChild(div);
+  }
+}
+
+function oddsChip(r){
+  if(!r) return '—';
+  const combo = `${r.home}-${r.away}`;
+  const pct = DATA.pivot[combo]!==undefined ? DATA.pivot[combo] : null;
+  if(pct===null) return '—';
+  const frac = pct/100;
+  const b = oddsBucket(frac);
+  return `<span class="odds-chip" title="${b.label}"><span class="swatch" style="background:${b.bg}"></span>${r.home}-${r.away} &middot; ${pct.toFixed(2)}%</span>`;
+}
+
+function showBoxDetail(n, t){
+  document.getElementById('box-detail-placeholder').style.display = 'none';
+  document.getElementById('box-detail-content').style.display = 'block';
+  document.getElementById('box-detail-title').textContent = `Box ${n}`;
+  document.getElementById('box-stats').innerHTML = `
+    <div class="stat"><div class="num">${t.status||'—'}</div><div class="lbl">Status</div></div>
+    <div class="stat"><div class="num">${t.times_hit||0}</div><div class="lbl">Times Hit</div></div>
+    <div class="stat"><div class="num">${fmtMoney(t.winnings)}</div><div class="lbl">Winnings</div></div>
+  `;
+
+  const rows = DATA.entries.filter(e=>e.box===n).sort((a,b)=> a.week-b.week || a.day.localeCompare(b.day));
+
+  // This week
+  const cw = DATA.current_week;
+  document.getElementById('cw-num').textContent = cw;
+  const dayOrder = {THU:'Thursday',SUN:'Sunday',MON:'Monday'};
+  const twHtml = Object.keys(dayOrder).map(d=>{
+    const r = rows.find(x=>x.week===cw && x.day===d);
+    const combo = r ? `${r.home}-${r.away}` : '—';
+    return `<div class="tw-card">
+      <div class="day-lbl">${dayOrder[d]}</div>
+      <div class="combo">${combo}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('this-week').innerHTML = twHtml;
+
+  // Condensed weekly odds table: one row per week, one column per day
+  let bodyHtml = '';
+  for(let wk=1; wk<=18; wk++){
+    const weekRows = rows.filter(r=>r.week===wk);
+    if(weekRows.length===0) continue;
+    const thu = weekRows.find(r=>r.day==='THU');
+    const sun = weekRows.find(r=>r.day==='SUN');
+    const mon = weekRows.find(r=>r.day==='MON');
+    bodyHtml += `<tr>
+      <td>Wk ${wk}</td>
+      <td class="odds-cell">${oddsChip(thu)}</td>
+      <td class="odds-cell">${oddsChip(sun)}</td>
+      <td class="odds-cell">${oddsChip(mon)}</td>
+    </tr>`;
+  }
+  document.getElementById('box-weekly-body').innerHTML = bodyHtml || '<tr><td colspan="4">No data for this box.</td></tr>';
+  document.getElementById('box-weekly-card').style.display = 'block';
+}
+
+// ---- init ----
+buildOverview();
+buildLeaderboard();
+buildSquares();
+</script>
+</body>
+</html>
