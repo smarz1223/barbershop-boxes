@@ -128,7 +128,7 @@ def build(static_data, csv_rows):
 
     return {
         "entries": entries,
-        "taken": taken,
+        "taken": leaderboard,
         "pivot": pivot,
         "weekly": weekly,
         "rollover": running_rollover,
