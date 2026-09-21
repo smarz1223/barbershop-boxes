@@ -1,15 +1,16 @@
 name: Update Barbershop Boxes site
 
 on:
-  # GitHub Actions cron is UTC-only and does not shift for daylight saving,
-  # so both possible UTC offsets for 11:00 AM America/New_York are scheduled.
-  # 15:00 UTC = 11:00 AM EDT (Mar-Nov)   16:00 UTC = 11:00 AM EST (Nov-Mar)
-  # The "Check it's actually 11am ET" step below no-ops on whichever run
-  # doesn't match today's actual UTC offset, so only one run per day builds.
+  # Both entries cover the two possible UTC offsets for ~11am America/New_York
+  # (EDT vs EST). Scheduled off the exact hour (:12 / :47) since GitHub delays
+  # cron runs most heavily right at :00 — the previous version's hour-gate
+  # kept getting skipped because those delays pushed it past the check.
+  # build_site.py is idempotent and only commits when something changed, so
+  # it's harmless to run it more than once a day.
   schedule:
-    - cron: '0 15 * * *'
-    - cron: '0 16 * * *'
-  workflow_dispatch: {}   # lets Marz trigger a manual rebuild from the Actions tab
+    - cron: '12 15 * * *'
+    - cron: '47 16 * * *'
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -20,28 +21,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check it's actually 11am ET (skip the non-matching cron run)
-        if: github.event_name == 'schedule'
-        run: |
-          hour=$(TZ="America/New_York" date +%H)
-          echo "Current hour in America/New_York: $hour"
-          if [ "$hour" != "11" ]; then
-            echo "Not 11am ET right now — skipping this run (the other cron entry will fire instead)."
-            echo "SKIP=true" >> "$GITHUB_ENV"
-          fi
-
       - name: Set up Python
-        if: env.SKIP != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Rebuild site from latest scores
-        if: env.SKIP != 'true'
         run: python3 build_site.py
 
       - name: Commit and push if index.html changed
-        if: env.SKIP != 'true'
         run: |
           git config user.name "barbershop-boxes-bot"
           git config user.email "actions@github.com"
