@@ -67,7 +67,7 @@
 
   table{width:100%;border-collapse:collapse;font-size:0.95rem;}
   th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);}
-  th{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.5px;color:var(--barber-navy);text-align:left;cursor:pointer;user-select:none;}
+  th{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.5px;color:var(--barber-navy);text-align:left;cursor:pointer;user-select:none;white-space:nowrap;}
   th.sortable:hover{color:var(--barber-red);}
   tr:last-child td{border-bottom:none;}
   .pay-win{color:var(--great);font-weight:700;}
@@ -83,60 +83,26 @@
   .stat.rollover .num{color:#fff;}
   .stat.rollover{background:var(--barber-red);}
 
-  /* Season at a Glance: 4 columns x 2 rows */
-  .glance-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-  }
+  .glance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
   @media(max-width:900px){.glance-grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:520px){.glance-grid{grid-template-columns:1fr;}}
   .glance-col{display:flex;flex-direction:column;gap:10px;}
   .glance-col .col-head{
-    font-family:'Bebas Neue',sans-serif;
-    font-size:1.15rem;
-    letter-spacing:1px;
-    color:var(--barber-navy);
-    border-bottom:2px solid var(--barber-brass);
-    padding-bottom:4px;
+    font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:1px;color:var(--barber-navy);
+    border-bottom:2px solid var(--barber-brass);padding-bottom:4px;
   }
   .glance-col .stat{width:100%;}
 
   .lb-cell{padding:6px 10px;font-weight:700;border-radius:2px;}
+  .bucket-cell{padding:5px 9px;font-weight:700;border-radius:2px;text-align:center;display:inline-block;min-width:22px;}
 
-  /* Squares + detail side-by-side */
-  .squares-layout{
-    display:grid;
-    grid-template-columns:minmax(260px,440px) 1fr;
-    gap:24px;
-    align-items:start;
-  }
-  @media(max-width:860px){
-    .squares-layout{grid-template-columns:1fr;}
-  }
-  .detail-col{
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:16px 18px;
-    min-height:120px;
-  }
+  .squares-layout{display:grid;grid-template-columns:minmax(260px,440px) 1fr;gap:24px;align-items:start;}
+  @media(max-width:860px){.squares-layout{grid-template-columns:1fr;}}
+  .detail-col{border:1px solid var(--line);border-radius:3px;padding:16px 18px;min-height:120px;}
   .detail-placeholder{color:#8C8478;font-style:italic;}
 
   .table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 
-  @media(max-width:480px){
-    header{padding:16px 16px 12px;}
-    header .brand h1{font-size:2rem;}
-    nav button{padding:8px 12px;font-size:0.85rem;}
-    main{padding:18px 12px 40px;}
-    .card{padding:16px 14px;}
-    .sq{font-size:0.65rem;}
-    .stat{min-width:120px;padding:10px 14px;}
-    .stat .num{font-size:1.5rem;}
-    .glance-grid{gap:10px;}
-  }
-
-  /* Squares grid */
   .squares{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;max-width:640px;}
   .sq{
     aspect-ratio:1;display:flex;align-items:center;justify-content:center;
@@ -151,23 +117,13 @@
   .legend .dot{width:12px;height:12px;display:inline-block;border-radius:2px;margin-right:6px;vertical-align:-1px;}
 
   .lookup{display:flex;gap:10px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
-  .lookup input{
-    font-family:'Bebas Neue',sans-serif;font-size:1.4rem;width:100px;padding:6px 10px;
-    border:2px solid var(--barber-navy);border-radius:2px;
-  }
-  .lookup button{
-    background:var(--barber-red);color:#fff;border:none;padding:10px 20px;
-    font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;cursor:pointer;border-radius:2px;
-  }
 
   .odds-chip{
     display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 8px;border-radius:3px;
     font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.5px;color:var(--ink);
     background:#fff;border:1px solid var(--line);
   }
-  .odds-chip .swatch{
-    width:12px;height:12px;flex:0 0 auto;border-radius:2px;border:1px solid rgba(0,0,0,0.15);
-  }
+  .odds-chip .swatch{width:12px;height:12px;flex:0 0 auto;border-radius:2px;border:1px solid rgba(0,0,0,0.15);}
   .odds-cell{text-align:center;font-weight:700;color:#241C15;}
 
   .this-week-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 18px;}
@@ -177,6 +133,18 @@
   .tw-card .combo{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;margin:4px 0;}
 
   footer{text-align:center;padding:22px;color:var(--barber-brass);font-size:0.8rem;}
+
+  @media(max-width:480px){
+    header{padding:16px 16px 12px;}
+    header .brand h1{font-size:2rem;}
+    nav button{padding:8px 12px;font-size:0.85rem;}
+    main{padding:18px 12px 40px;}
+    .card{padding:16px 14px;}
+    .sq{font-size:0.65rem;}
+    .stat{min-width:120px;padding:10px 14px;}
+    .stat .num{font-size:1.5rem;}
+    .glance-grid{gap:10px;}
+  }
 </style>
 </head>
 <body>
@@ -202,7 +170,6 @@
       <h2>Season at a Glance</h2>
       <div class="glance-grid" id="glance-grid"></div>
     </div>
-
     <div class="day-grid" id="overview-days"></div>
   </section>
 
@@ -219,6 +186,12 @@
             <th class="sortable" data-key="status">Status</th>
             <th class="sortable" data-key="times_hit">Times Hit</th>
             <th class="sortable" data-key="winnings">Total Winnings</th>
+            <th class="sortable" data-key="great">Great</th>
+            <th class="sortable" data-key="good">Good</th>
+            <th class="sortable" data-key="bad">Bad</th>
+            <th class="sortable" data-key="awful">Awful</th>
+            <th class="sortable" data-key="avg_odds">Avg Odds</th>
+            <th class="sortable" data-key="odds_rank">Odds Rank</th>
           </tr>
         </thead>
         <tbody id="lb-body"></tbody>
@@ -272,7 +245,6 @@
 <script>
 const DATA = JSON.parse(document.getElementById('site-data').textContent);
 
-// ---- tab nav ----
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -284,16 +256,13 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
 function fmtMoney(n){ return '$'+Number(n||0).toLocaleString(); }
 
-// ---- odds bucket (Great/Good/Bad/Awful, matches source workbook thresholds) ----
 function oddsBucket(pctFraction){
-  // pctFraction expressed as a fraction (0.04 = 4%), matching workbook thresholds
   if(pctFraction < 0.01) return {label:'Awful', bg:'var(--awful)', fg:'#fff'};
   if(pctFraction < 0.02) return {label:'Bad', bg:'var(--bad)', fg:'#241C15'};
   if(pctFraction < 0.04) return {label:'Good', bg:'var(--good)', fg:'#241C15'};
   return {label:'Great', bg:'var(--great)', fg:'#fff'};
 }
 
-// ---- Pool Overview ----
 function buildOverview(){
   const r = DATA.rollover;
   const td = DATA.top_dollar_box, th = DATA.top_hit_box;
@@ -355,7 +324,6 @@ function buildOverview(){
   });
 }
 
-// ---- Leaderboard ----
 let lbSort = {key:'winnings', dir:-1};
 function buildLeaderboard(){
   renderLeaderboard();
@@ -368,12 +336,16 @@ function buildLeaderboard(){
   });
 }
 function greenScale(value, max){
-  // white (255,255,255) -> workbook green (#57BB8A / 87,187,138)
   const t = max>0 ? Math.min(value/max, 1) : 0;
   const r = Math.round(255 + t*(87-255));
   const g = Math.round(255 + t*(187-255));
   const b = Math.round(255 + t*(138-255));
   return `rgb(${r},${g},${b})`;
+}
+function bucketCountCell(n, bucket){
+  const colors = {great:'var(--great)', good:'var(--good)', bad:'var(--bad)', awful:'var(--awful)'};
+  const fg = (bucket==='great'||bucket==='awful') ? '#fff' : '#241C15';
+  return `<span class="bucket-cell" style="background:${colors[bucket]};color:${fg}">${n}</span>`;
 }
 function renderLeaderboard(){
   const rows = [...DATA.leaderboard].sort((a,b)=>{
@@ -389,10 +361,15 @@ function renderLeaderboard(){
       <td>${r.status}</td>
       <td><span class="lb-cell" style="background:${greenScale(r.times_hit,maxHit)}">${r.times_hit}</span></td>
       <td><span class="lb-cell" style="background:${greenScale(r.winnings,maxWin)}">${fmtMoney(r.winnings)}</span></td>
+      <td>${bucketCountCell(r.great,'great')}</td>
+      <td>${bucketCountCell(r.good,'good')}</td>
+      <td>${bucketCountCell(r.bad,'bad')}</td>
+      <td>${bucketCountCell(r.awful,'awful')}</td>
+      <td>${r.avg_odds.toFixed(2)}%</td>
+      <td>#${r.odds_rank}</td>
     </tr>`).join('');
 }
 
-// ---- Squares + box detail ----
 let selectedSq = null;
 function buildSquares(){
   const grid = document.getElementById('squares-grid');
@@ -434,7 +411,6 @@ function showBoxDetail(n, t){
 
   const rows = DATA.entries.filter(e=>e.box===n).sort((a,b)=> a.week-b.week || a.day.localeCompare(b.day));
 
-  // This week
   const cw = DATA.current_week;
   document.getElementById('cw-num').textContent = cw;
   const dayOrder = {THU:'Thursday',SUN:'Sunday',MON:'Monday'};
@@ -448,7 +424,6 @@ function showBoxDetail(n, t){
   }).join('');
   document.getElementById('this-week').innerHTML = twHtml;
 
-  // Condensed weekly odds table: one row per week, one column per day
   let bodyHtml = '';
   for(let wk=1; wk<=18; wk++){
     const weekRows = rows.filter(r=>r.week===wk);
@@ -467,7 +442,6 @@ function showBoxDetail(n, t){
   document.getElementById('box-weekly-card').style.display = 'block';
 }
 
-// ---- init ----
 buildOverview();
 buildLeaderboard();
 buildSquares();

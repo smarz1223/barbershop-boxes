@@ -42,14 +42,29 @@ def find_box(entries_by_week_day, week, day, home_digit, away_digit):
     return None
 
 
+def odds_bucket(pct):
+    """pct is a percentage value, e.g. 4.2 means 4.2%. Thresholds match the
+    workbook's original Great/Good/Bad/Awful conditional formatting."""
+    frac = pct / 100
+    if frac < 0.01:
+        return "awful"
+    if frac < 0.02:
+        return "bad"
+    if frac < 0.04:
+        return "good"
+    return "great"
+
+
 def build(static_data, csv_rows):
     entries = static_data["entries"]
     taken = static_data["taken"]  # {"1": "TAKEN"/"NOT TAKEN", ...}
     pivot = static_data["pivot"]
 
     entries_by_week_day = {}
+    entries_by_box = {}
     for e in entries:
         entries_by_week_day.setdefault((e["week"], e["day"]), []).append(e)
+        entries_by_box.setdefault(e["box"], []).append(e)
 
     # index CSV rows by (week, day)
     scores = {}
@@ -120,6 +135,32 @@ def build(static_data, csv_rows):
 
     if current_week is None:
         current_week = 18
+
+    # ---- Box-level odds analysis: Great/Good/Bad/Awful combo counts + avg odds ----
+    for box_str, lb in leaderboard.items():
+        box = lb["box"]
+        combos = entries_by_box.get(box, [])
+        counts = {"great": 0, "good": 0, "bad": 0, "awful": 0}
+        total_pct = 0.0
+        n = 0
+        for e in combos:
+            key = f"{e['home']}-{e['away']}"
+            pct = pivot.get(key)
+            if pct is None:
+                continue
+            counts[odds_bucket(pct)] += 1
+            total_pct += pct
+            n += 1
+        lb["great"] = counts["great"]
+        lb["good"] = counts["good"]
+        lb["bad"] = counts["bad"]
+        lb["awful"] = counts["awful"]
+        lb["avg_odds"] = round(total_pct / n, 3) if n else 0
+
+    # Rank boxes by average odds, best (highest) = rank 1
+    ranked = sorted(leaderboard.values(), key=lambda x: -x["avg_odds"])
+    for i, lb in enumerate(ranked):
+        lb["odds_rank"] = i + 1
 
     leaderboard_list = list(leaderboard.values())
     leaderboard_list.sort(key=lambda x: (-x["winnings"], -x["times_hit"]))
