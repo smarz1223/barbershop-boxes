@@ -256,10 +256,13 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 
 function fmtMoney(n){ return '$'+Number(n||0).toLocaleString(); }
 
-function oddsBucket(pctFraction){
-  if(pctFraction < 0.01) return {label:'Awful', bg:'var(--awful)', fg:'#fff'};
-  if(pctFraction < 0.02) return {label:'Bad', bg:'var(--bad)', fg:'#241C15'};
-  if(pctFraction < 0.04) return {label:'Good', bg:'var(--good)', fg:'#241C15'};
+function oddsBucket(pct){
+  // pct is a percentage value (e.g. 4.2 = 4.2%), bucketed by the same
+  // data-driven quartiles build_site.py used for the leaderboard counts.
+  const t = DATA.odds_thresholds;
+  if(pct <= t.q1) return {label:'Awful', bg:'var(--awful)', fg:'#fff'};
+  if(pct <= t.q2) return {label:'Bad', bg:'var(--bad)', fg:'#241C15'};
+  if(pct <= t.q3) return {label:'Good', bg:'var(--good)', fg:'#241C15'};
   return {label:'Great', bg:'var(--great)', fg:'#fff'};
 }
 
@@ -394,8 +397,7 @@ function oddsChip(r){
   const combo = `${r.home}-${r.away}`;
   const pct = DATA.pivot[combo]!==undefined ? DATA.pivot[combo] : null;
   if(pct===null) return '—';
-  const frac = pct/100;
-  const b = oddsBucket(frac);
+  const b = oddsBucket(pct);
   return `<span class="odds-chip" title="${b.label}"><span class="swatch" style="background:${b.bg}"></span>${r.home}-${r.away} &middot; ${pct.toFixed(2)}%</span>`;
 }
 

@@ -42,15 +42,28 @@ def find_box(entries_by_week_day, week, day, home_digit, away_digit):
     return None
 
 
-def odds_bucket(pct):
-    """pct is a percentage value, e.g. 4.2 means 4.2%. Thresholds match the
-    workbook's original Great/Good/Bad/Awful conditional formatting."""
-    frac = pct / 100
-    if frac < 0.01:
+def compute_quartiles(pivot):
+    """Data-driven Great/Good/Bad/Awful cutoffs: split the current 100 combo
+    odds into quartiles rather than using fixed percentage thresholds, so the
+    buckets re-calibrate automatically whenever the odds data is refreshed."""
+    vals = sorted(pivot.values())
+    n = len(vals)
+
+    def pct_at(p):
+        idx = min(int(round(p * (n - 1))), n - 1)
+        return vals[idx]
+
+    return {"q1": pct_at(0.25), "q2": pct_at(0.50), "q3": pct_at(0.75)}
+
+
+def odds_bucket(pct, thresholds):
+    """pct is a percentage value, e.g. 4.2 means 4.2%. Bucketed into quartiles
+    of the current odds distribution (bottom 25% = awful ... top 25% = great)."""
+    if pct <= thresholds["q1"]:
         return "awful"
-    if frac < 0.02:
+    if pct <= thresholds["q2"]:
         return "bad"
-    if frac < 0.04:
+    if pct <= thresholds["q3"]:
         return "good"
     return "great"
 
@@ -137,6 +150,7 @@ def build(static_data, csv_rows):
         current_week = 18
 
     # ---- Box-level odds analysis: Great/Good/Bad/Awful combo counts + avg odds ----
+    odds_thresholds = compute_quartiles(pivot)
     for box_str, lb in leaderboard.items():
         box = lb["box"]
         combos = entries_by_box.get(box, [])
@@ -148,7 +162,7 @@ def build(static_data, csv_rows):
             pct = pivot.get(key)
             if pct is None:
                 continue
-            counts[odds_bucket(pct)] += 1
+            counts[odds_bucket(pct, odds_thresholds)] += 1
             total_pct += pct
             n += 1
         lb["great"] = counts["great"]
@@ -171,6 +185,7 @@ def build(static_data, csv_rows):
         "entries": entries,
         "taken": leaderboard,
         "pivot": pivot,
+        "odds_thresholds": odds_thresholds,
         "weekly": weekly,
         "rollover": running_rollover,
         "leaderboard": leaderboard_list,
