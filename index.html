@@ -72,6 +72,7 @@
   tr:last-child td{border-bottom:none;}
   .pay-win{color:var(--great);font-weight:700;}
   .pay-none{color:#8C8478;}
+  .results-table th,.results-table td{white-space:nowrap;padding:8px 6px;}
 
   .day-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
   @media(max-width:820px){.day-grid{grid-template-columns:1fr;}}
@@ -308,8 +309,8 @@ function buildOverview(){
       <tr>
         <td>Wk ${w.week}</td>
         <td>${w.score}</td>
-        <td class="${w.straight_pay?'pay-win':'pay-none'}">${w.straight_pay?('Box '+w.straight_box+' — '+fmtMoney(w.straight_pay)):'No hit'}</td>
-        <td class="${w.reverse_pay?'pay-win':'pay-none'}">${w.reverse_pay?('Box '+w.reverse_box+' — '+fmtMoney(w.reverse_pay)):'No hit'}</td>
+        <td class="${w.straight_pay?'pay-win':'pay-none'}">${w.straight_pay?('#'+w.straight_box+' · '+fmtMoney(w.straight_pay)):'No hit'}</td>
+        <td class="${w.reverse_pay?'pay-win':'pay-none'}">${w.reverse_pay?('#'+w.reverse_box+' · '+fmtMoney(w.reverse_pay)):'No hit'}</td>
       </tr>`).join('');
     if(!rowsHtml) rowsHtml = `<tr><td colspan="4" style="color:#8C8478">No games played yet</td></tr>`;
     const card = document.createElement('div');
@@ -318,7 +319,7 @@ function buildOverview(){
       <h2>${dayNames[d]}</h2>
       <div class="hint">Straight $700 &middot; Reverse $200</div>
       <div class="table-scroll">
-      <table>
+      <table class="results-table">
         <thead><tr><th>Week</th><th>Score</th><th>Straight</th><th>Reverse</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
